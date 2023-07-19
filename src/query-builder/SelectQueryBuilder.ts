@@ -3689,7 +3689,14 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
                             "." +
                             this.escape(orderCriteria)
                         )
-
+                    else if (
+                        this.expressionMap.selects.find(
+                            (select) => select.aliasName && this.escape(select.aliasName) === orderCriteria)
+                        ) {
+                        return this.escape(parentAlias) +
+                            "." +
+                            orderCriteria
+                    }
                     return ""
                 }
             })
@@ -3729,6 +3736,13 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
                             "." +
                             this.escape(orderCriteria)
                     ] = orderBys[orderCriteria]
+                } else if (
+                    this.expressionMap.selects.find(
+                        (select) => (select.aliasName && this.escape(select.aliasName) === orderCriteria))
+                    ) {
+                    orderByObject[this.escape(parentAlias) +
+                        "." +
+                        orderCriteria] = orderBys[orderCriteria];
                 } else {
                     orderByObject[orderCriteria] = orderBys[orderCriteria]
                 }
